@@ -32,6 +32,7 @@ export function Scanner() {
   const [manualCode, setManualCode] = useState('')
   const [torchSupported, setTorchSupported] = useState(false)
   const [torchOn, setTorchOn] = useState(false)
+  const [scanned, setScanned] = useState(false)
 
   useEffect(() => {
     const reader = new BrowserMultiFormatReader(hints, {
@@ -59,7 +60,9 @@ export function Scanner() {
           if (result) {
             const codigo = result.getText().trim()
             controlsRef.current?.stop()
-            navigate(`/material/${encodeURIComponent(codigo)}`)
+            navigator.vibrate?.(60)
+            setScanned(true)
+            setTimeout(() => navigate(`/material/${encodeURIComponent(codigo)}`), 220)
           } else if (err && err.name !== 'NotFoundException') {
             // ruido normal de frames sin código detectado: se ignora
           }
@@ -119,6 +122,11 @@ export function Scanner() {
               <span />
               <div className="scan-line" />
             </div>
+            {scanned && (
+              <div className="scan-success">
+                <span className="scan-success-check">✓</span>
+              </div>
+            )}
             {torchSupported && (
               <button
                 type="button"

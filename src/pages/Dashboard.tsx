@@ -2,13 +2,21 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { categoryColor } from '../utils/categoryColors'
 import type { Material } from '../types'
+
+const STOCK_BAJO_MAX = 2
 
 function saludo() {
   const hora = new Date().getHours()
   if (hora < 12) return 'Buenos días'
   if (hora < 19) return 'Buenas tardes'
   return 'Buenas noches'
+}
+
+interface CategoriaConteo {
+  nombre: string
+  cantidad: number
 }
 
 export function Dashboard() {
@@ -19,6 +27,8 @@ export function Dashboard() {
   const [categorias, setCategorias] = useState(0)
   const [nuevosSemana, setNuevosSemana] = useState(0)
   const [recientes, setRecientes] = useState<Material[]>([])
+  const [topCategorias, setTopCategorias] = useState<CategoriaConteo[]>([])
+  const [stockBajo, setStockBajo] = useState<Material[]>([])
 
   useEffect(() => {
     let cancelled = false
@@ -26,20 +36,39 @@ export function Dashboard() {
     async function load() {
       const haceUnaSemana = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
 
-      const [materialesCount, almacenesCount, semanaCount, categoriasData, recientesData] = await Promise.all([
+      const [materialesCount, almacenesCount, semanaCount, todos, recientesData] = await Promise.all([
         supabase.from('materiales').select('*', { count: 'exact', head: true }),
         supabase.from('almacenes').select('*', { count: 'exact', head: true }),
         supabase.from('materiales').select('*', { count: 'exact', head: true }).gte('created_at', haceUnaSemana),
-        supabase.from('materiales').select('categoria'),
+        supabase.from('materiales').select('*'),
         supabase.from('materiales').select('*').order('created_at', { ascending: false }).limit(5),
       ])
 
       if (cancelled) return
 
+      const materiales = todos.data ?? []
+
+      const conteoPorCategoria = new Map<string, number>()
+      for (const m of materiales) {
+        if (!m.categoria) continue
+        conteoPorCategoria.set(m.categoria, (conteoPorCategoria.get(m.categoria) ?? 0) + 1)
+      }
+      const ranking = [...conteoPorCategoria.entries()]
+        .map(([nombre, cantidad]) => ({ nombre, cantidad }))
+        .sort((a, b) => b.cantidad - a.cantidad)
+        .slice(0, 5)
+
+      const bajoStock = materiales
+        .filter((m) => m.cantidad <= STOCK_BAJO_MAX)
+        .sort((a, b) => a.cantidad - b.cantidad)
+        .slice(0, 5)
+
       setTotalMateriales(materialesCount.count ?? 0)
       setTotalAlmacenes(almacenesCount.count ?? 0)
       setNuevosSemana(semanaCount.count ?? 0)
-      setCategorias(new Set((categoriasData.data ?? []).map((m) => m.categoria).filter(Boolean)).size)
+      setCategorias(conteoPorCategoria.size)
+      setTopCategorias(ranking)
+      setStockBajo(bajoStock)
       setRecientes(recientesData.data ?? [])
       setLoading(false)
     }
@@ -51,6 +80,7 @@ export function Dashboard() {
   }, [])
 
   const nombreUsuario = session?.user.email?.split('@')[0] ?? ''
+  const maxCategoria = topCategorias[0]?.cantidad ?? 1
 
   return (
     <div className="dashboard-page">
@@ -101,6 +131,53 @@ export function Dashboard() {
             <small>Gestionar ubicaciones</small>
           </span>
         </Link>
+      </div>
+
+      <div className="dashboard-split">
+        <div className="dashboard-panel">
+          <h3>Materiales por categoría</h3>
+          {!loading && topCategorias.length === 0 ? (
+            <p className="hint">Asigna categorías a tus materiales para ver la distribución aquí.</p>
+          ) : (
+            <div className="bar-list">
+              {topCategorias.map((c) => {
+                const { fg } = categoryColor(c.nombre)
+                const pct = Math.max(6, Math.round((c.cantidad / maxCategoria) * 100))
+                return (
+                  <div className="bar-row" key={c.nombre}>
+                    <div className="bar-row-label">
+                      <span className="bar-dot" style={{ background: fg }} />
+                      <span>{c.nombre}</span>
+                      <span className="bar-row-count">{c.cantidad}</span>
+                    </div>
+                    <div className="bar-track">
+                      <div className="bar-fill" style={{ width: `${pct}%` }} />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        <div className="dashboard-panel">
+          <h3>Pocas existencias</h3>
+          {!loading && stockBajo.length === 0 ? (
+            <p className="hint">Todo tu inventario tiene existencias saludables.</p>
+          ) : (
+            <div className="recent-list">
+              {stockBajo.map((m) => (
+                <Link to={`/material/${encodeURIComponent(m.codigo)}`} className="recent-item low-stock-item" key={m.id}>
+                  <span className="low-stock-dot" />
+                  <span className="recent-item-name">{m.nombre}</span>
+                  <span className="recent-item-meta">
+                    {m.cantidad} {m.unidad}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="dashboard-recent">
