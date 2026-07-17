@@ -725,6 +725,26 @@ label {
   }
 }
 
+.torch-toggle {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: none;
+  backdrop-filter: blur(4px);
+}
+
+.torch-toggle.active {
+  background: var(--acc);
+}
+
 .manual-entry {
   display: flex;
   gap: 8px;

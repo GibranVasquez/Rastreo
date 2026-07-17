@@ -1,7 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BrowserMultiFormatReader } from '@zxing/browser'
+import { BarcodeFormat, BrowserMultiFormatReader } from '@zxing/browser'
 import type { IScannerControls } from '@zxing/browser'
+import { DecodeHintType } from '@zxing/library'
+
+// Limitar los formatos a los que realmente usamos evita que el lector pierda
+// tiempo por frame probando formatos raros (PDF417, Aztec, MaxiCode…),
+// que es la causa principal de que el escaneo se sienta lento.
+const hints = new Map<DecodeHintType, unknown>([
+  [
+    DecodeHintType.POSSIBLE_FORMATS,
+    [
+      BarcodeFormat.QR_CODE,
+      BarcodeFormat.EAN_13,
+      BarcodeFormat.EAN_8,
+      BarcodeFormat.UPC_A,
+      BarcodeFormat.UPC_E,
+      BarcodeFormat.CODE_128,
+      BarcodeFormat.CODE_39,
+      BarcodeFormat.CODABAR,
+      BarcodeFormat.ITF,
+    ],
+  ],
+])
 
 export function Scanner() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -9,14 +30,29 @@ export function Scanner() {
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
   const [manualCode, setManualCode] = useState('')
+  const [torchSupported, setTorchSupported] = useState(false)
+  const [torchOn, setTorchOn] = useState(false)
 
   useEffect(() => {
-    const reader = new BrowserMultiFormatReader()
+    const reader = new BrowserMultiFormatReader(hints, {
+      delayBetweenScanAttempts: 60,
+      delayBetweenScanSuccess: 500,
+    })
     let cancelled = false
 
     reader
       .decodeFromConstraints(
-        { video: { facingMode: 'environment' } },
+        {
+          video: {
+            facingMode: 'environment',
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+            // focusMode no está tipado en lib.dom.d.ts, pero sí lo soportan
+            // Chrome/Android; sin enfoque continuo los códigos de barras
+            // pequeños salen borrosos y tardan varios intentos en leerse.
+            advanced: [{ focusMode: 'continuous' } as MediaTrackConstraintSet],
+          },
+        },
         videoRef.current!,
         (result, err) => {
           if (cancelled) return
@@ -35,6 +71,7 @@ export function Scanner() {
           return
         }
         controlsRef.current = controls
+        setTorchSupported(typeof controls.switchTorch === 'function')
       })
       .catch((e: Error) => {
         setError(
@@ -49,6 +86,11 @@ export function Scanner() {
       controlsRef.current?.stop()
     }
   }, [navigate])
+
+  function toggleTorch() {
+    const next = !torchOn
+    controlsRef.current?.switchTorch?.(next).then(() => setTorchOn(next))
+  }
 
   function goManual(e: React.FormEvent) {
     e.preventDefault()
@@ -77,6 +119,16 @@ export function Scanner() {
               <span />
               <div className="scan-line" />
             </div>
+            {torchSupported && (
+              <button
+                type="button"
+                className={`torch-toggle${torchOn ? ' active' : ''}`}
+                onClick={toggleTorch}
+                aria-label="Linterna"
+              >
+                💡
+              </button>
+            )}
           </div>
         </>
       )}
