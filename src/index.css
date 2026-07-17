@@ -117,7 +117,14 @@ code {
 .navbar,
 .app-main {
   position: relative;
+}
+
+.app-main {
   z-index: 1;
+}
+
+.navbar {
+  z-index: 50;
 }
 
 .app-main {
