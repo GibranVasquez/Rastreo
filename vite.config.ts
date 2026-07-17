@@ -17,8 +17,8 @@ export default defineConfig(({ command }) => ({
         name: 'Rastro — Control de materiales',
         short_name: 'Rastro',
         description: 'Escanea QR y códigos de barras para registrar y controlar materiales.',
-        theme_color: '#0d9488',
-        background_color: '#0e1213',
+        theme_color: '#0a0e18',
+        background_color: '#05070d',
         display: 'standalone',
         start_url: '/',
         icons: [

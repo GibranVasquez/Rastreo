@@ -51,3 +51,39 @@ create policy "materiales_update_auth" on materiales
 drop policy if exists "materiales_delete_auth" on materiales;
 create policy "materiales_delete_auth" on materiales
   for delete using (auth.role() = 'authenticated');
+
+-- Almacenes: catálogo de ubicaciones/bodegas (independiente de "ubicacion" en
+-- materiales, que sigue siendo texto libre — aquí solo se administra la lista)
+create table if not exists almacenes (
+  id uuid primary key default gen_random_uuid(),
+  nombre text not null,
+  notas text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create unique index if not exists almacenes_nombre_key on almacenes (nombre);
+
+drop trigger if exists almacenes_set_updated_at on almacenes;
+create trigger almacenes_set_updated_at
+  before update on almacenes
+  for each row
+  execute function set_updated_at();
+
+alter table almacenes enable row level security;
+
+drop policy if exists "almacenes_select_auth" on almacenes;
+create policy "almacenes_select_auth" on almacenes
+  for select using (auth.role() = 'authenticated');
+
+drop policy if exists "almacenes_insert_auth" on almacenes;
+create policy "almacenes_insert_auth" on almacenes
+  for insert with check (auth.role() = 'authenticated');
+
+drop policy if exists "almacenes_update_auth" on almacenes;
+create policy "almacenes_update_auth" on almacenes
+  for update using (auth.role() = 'authenticated');
+
+drop policy if exists "almacenes_delete_auth" on almacenes;
+create policy "almacenes_delete_auth" on almacenes
+  for delete using (auth.role() = 'authenticated');

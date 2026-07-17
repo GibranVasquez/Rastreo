@@ -13,3 +13,13 @@ export interface Material {
 }
 
 export type MaterialInput = Omit<Material, 'id' | 'created_at' | 'updated_at'>
+
+export interface Almacen {
+  id: string
+  nombre: string
+  notas: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type AlmacenInput = Omit<Almacen, 'id' | 'created_at' | 'updated_at'>

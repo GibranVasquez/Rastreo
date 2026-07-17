@@ -12,7 +12,7 @@ export function Login() {
   const [info, setInfo] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
-  if (session) return <Navigate to="/scanner" replace />
+  if (session) return <Navigate to="/" replace />
 
   function clearMessages() {
     setError(null)

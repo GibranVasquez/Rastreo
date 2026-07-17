@@ -7,6 +7,8 @@ import { Login } from './pages/Login'
 import { Scanner } from './pages/Scanner'
 import { MaterialForm } from './pages/MaterialForm'
 import { Listado } from './pages/Listado'
+import { Dashboard } from './pages/Dashboard'
+import { Almacenes } from './pages/Almacenes'
 import { isSupabaseConfigured } from './lib/supabase'
 
 function SetupNeeded() {
@@ -35,6 +37,14 @@ export default function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/scanner"
                 element={
                   <ProtectedRoute>
@@ -58,7 +68,15 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="*" element={<Navigate to="/scanner" replace />} />
+              <Route
+                path="/almacenes"
+                element={
+                  <ProtectedRoute>
+                    <Almacenes />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
         </BrowserRouter>

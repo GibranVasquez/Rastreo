@@ -28,6 +28,15 @@ export function MaterialForm() {
   const [addingCustomCat, setAddingCustomCat] = useState(false)
   const [buscandoProducto, setBuscandoProducto] = useState(false)
   const [autocompletado, setAutocompletado] = useState(false)
+  const [almacenes, setAlmacenes] = useState<string[]>([])
+
+  useEffect(() => {
+    supabase
+      .from('almacenes')
+      .select('nombre')
+      .order('nombre')
+      .then(({ data }) => setAlmacenes((data ?? []).map((a) => a.nombre)))
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -170,7 +179,17 @@ export function MaterialForm() {
 
           <label>
             Ubicación
-            <input value={ubicacion} onChange={(e) => setUbicacion(e.target.value)} placeholder="Almacén A, estante 3…" />
+            <input
+              list="almacenes-datalist"
+              value={ubicacion}
+              onChange={(e) => setUbicacion(e.target.value)}
+              placeholder="Elige o escribe un almacén…"
+            />
+            <datalist id="almacenes-datalist">
+              {almacenes.map((nombre) => (
+                <option key={nombre} value={nombre} />
+              ))}
+            </datalist>
           </label>
 
           <div className="full">
