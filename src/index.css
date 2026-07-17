@@ -159,18 +159,30 @@ code {
   -webkit-backdrop-filter: var(--blur-glass);
 }
 
+.navbar-scroll {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+}
+
+.navbar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 .navbar-links {
   display: flex;
   align-items: center;
   gap: 20px;
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.navbar-links::-webkit-scrollbar {
-  display: none;
+  width: max-content;
+  padding: 0 4px;
 }
 
 .navbar-links a {
@@ -185,10 +197,6 @@ code {
 .navbar-links a.active {
   color: var(--ink);
   font-weight: 700;
-}
-
-.navbar-links .link-btn {
-  flex-shrink: 0;
 }
 
 .navbar-avatar-wrap {

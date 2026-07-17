@@ -29,42 +29,44 @@ export function NavBar() {
           <img src="/app-icon.svg" alt="" className="brand-mark" />
         </NavLink>
       </div>
-      <div className="navbar-links">
-        <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
-          Inicio
-        </NavLink>
-        <NavLink to="/scanner" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Escanear
-        </NavLink>
-        <NavLink to="/listado" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Listado
-        </NavLink>
-        <NavLink to="/almacenes" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Almacenes
-        </NavLink>
-
-        <div className="navbar-avatar-wrap" ref={menuRef}>
-          <button
-            type="button"
-            className="navbar-avatar"
-            onClick={() => setMenuOpen((v) => !v)}
-            aria-label="Cuenta"
-          >
-            {inicial}
-          </button>
-          {menuOpen && (
-            <div className="navbar-menu">
-              <div className="navbar-menu-email">{email}</div>
-              <button
-                type="button"
-                className="link-btn danger"
-                onClick={() => supabase.auth.signOut()}
-              >
-                Salir
-              </button>
-            </div>
-          )}
+      <div className="navbar-scroll">
+        <div className="navbar-links">
+          <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
+            Inicio
+          </NavLink>
+          <NavLink to="/scanner" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Escanear
+          </NavLink>
+          <NavLink to="/listado" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Listado
+          </NavLink>
+          <NavLink to="/almacenes" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Almacenes
+          </NavLink>
         </div>
+      </div>
+
+      <div className="navbar-avatar-wrap" ref={menuRef}>
+        <button
+          type="button"
+          className="navbar-avatar"
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-label="Cuenta"
+        >
+          {inicial}
+        </button>
+        {menuOpen && (
+          <div className="navbar-menu">
+            <div className="navbar-menu-email">{email}</div>
+            <button
+              type="button"
+              className="link-btn danger"
+              onClick={() => supabase.auth.signOut()}
+            >
+              Salir
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   )
