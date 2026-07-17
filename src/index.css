@@ -552,6 +552,67 @@ label {
   }
 }
 
+/* Skeletons de carga */
+.skel {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-alt);
+  border-radius: 8px;
+}
+
+.skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.06),
+    transparent
+  );
+  animation: skelShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skelShimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.skel-text {
+  height: 12px;
+  border-radius: 6px;
+}
+
+.skel-row {
+  height: 52px;
+  border-radius: 14px;
+  margin-bottom: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skel::after {
+    animation: none;
+  }
+}
+
+/* Transición de entrada por página */
+.page-enter {
+  animation: pageEnter 0.28s ease both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .material-cards .material-card:nth-child(1) { animation-delay: 0.02s; }
 .material-cards .material-card:nth-child(2) { animation-delay: 0.06s; }
 .material-cards .material-card:nth-child(3) { animation-delay: 0.1s; }
@@ -1467,6 +1528,11 @@ label {
   display: flex;
   align-items: center;
   gap: 14px;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.almacen-card:hover {
+  border-color: var(--acc-hover);
 }
 
 .almacen-card-icon {

@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
@@ -27,6 +27,80 @@ function SetupNeeded() {
   )
 }
 
+function AppShell() {
+  const { pathname } = useLocation()
+
+  return (
+    <>
+      <NavBar />
+      <main className="app-main">
+        <div className="page-enter" key={pathname}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/scanner"
+              element={
+                <ProtectedRoute>
+                  <Scanner />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/material/:codigo"
+              element={
+                <ProtectedRoute>
+                  <MaterialForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/listado"
+              element={
+                <ProtectedRoute>
+                  <Listado />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/almacenes"
+              element={
+                <ProtectedRoute>
+                  <Almacenes />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/categorias"
+              element={
+                <ProtectedRoute>
+                  <Categorias />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/estadisticas"
+              element={
+                <ProtectedRoute>
+                  <Estadisticas />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </main>
+    </>
+  )
+}
+
 export default function App() {
   if (!isSupabaseConfigured) return <SetupNeeded />
 
@@ -34,69 +108,7 @@ export default function App() {
     <ToastProvider>
       <AuthProvider>
         <BrowserRouter>
-          <NavBar />
-          <main className="app-main">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/scanner"
-                element={
-                  <ProtectedRoute>
-                    <Scanner />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/material/:codigo"
-                element={
-                  <ProtectedRoute>
-                    <MaterialForm />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/listado"
-                element={
-                  <ProtectedRoute>
-                    <Listado />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/almacenes"
-                element={
-                  <ProtectedRoute>
-                    <Almacenes />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/categorias"
-                element={
-                  <ProtectedRoute>
-                    <Categorias />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/estadisticas"
-                element={
-                  <ProtectedRoute>
-                    <Estadisticas />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
+          <AppShell />
         </BrowserRouter>
       </AuthProvider>
     </ToastProvider>

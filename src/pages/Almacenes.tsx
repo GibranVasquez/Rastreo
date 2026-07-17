@@ -127,9 +127,10 @@ export function Almacenes() {
       {error && <p className="auth-error">{error}</p>}
 
       {loading ? (
-        <div className="card state-card">
-          <div className="spinner" />
-          <h3>Un momento…</h3>
+        <div className="almacen-list">
+          <div className="skel skel-row" />
+          <div className="skel skel-row" />
+          <div className="skel skel-row" />
         </div>
       ) : almacenes.length === 0 ? (
         <div className="card state-card">

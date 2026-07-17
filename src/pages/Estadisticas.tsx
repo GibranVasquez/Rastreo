@@ -81,10 +81,24 @@ export function Estadisticas() {
       </div>
 
       {loading ? (
-        <div className="card state-card">
-          <div className="spinner" />
-          <h3>Calculando…</h3>
-        </div>
+        <>
+          <div className="dashboard-panel" style={{ marginBottom: 16 }}>
+            <h3>Registros por día (últimos 14 días)</h3>
+            <div className="skel" style={{ height: 140, borderRadius: 12 }} />
+          </div>
+          <div className="dashboard-split">
+            <div className="dashboard-panel">
+              <h3>Materiales por almacén</h3>
+              <div className="skel skel-text" style={{ width: '70%', height: 30, marginBottom: 8 }} />
+              <div className="skel skel-text" style={{ width: '45%', height: 30 }} />
+            </div>
+            <div className="dashboard-panel">
+              <h3>Materiales por categoría</h3>
+              <div className="skel skel-text" style={{ width: '60%', height: 30, marginBottom: 8 }} />
+              <div className="skel skel-text" style={{ width: '35%', height: 30 }} />
+            </div>
+          </div>
+        </>
       ) : (
         <>
           <div className="dashboard-panel" style={{ marginBottom: 16 }}>

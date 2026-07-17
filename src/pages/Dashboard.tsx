@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { categoryColor } from '../utils/categoryColors'
+import { useCountUp } from '../utils/useCountUp'
 import { STOCK_BAJO_MAX } from '../lib/constants'
 import type { Material } from '../types'
 
@@ -81,6 +82,11 @@ export function Dashboard() {
   const nombreUsuario = session?.user.email?.split('@')[0] ?? ''
   const maxCategoria = topCategorias[0]?.cantidad ?? 1
 
+  const cMateriales = useCountUp(totalMateriales, !loading)
+  const cAlmacenes = useCountUp(totalAlmacenes, !loading)
+  const cCategorias = useCountUp(categorias, !loading)
+  const cNuevos = useCountUp(nuevosSemana, !loading)
+
   return (
     <div className="dashboard-page">
       <div className="dashboard-hero">
@@ -91,19 +97,19 @@ export function Dashboard() {
 
       <div className="stat-grid">
         <div className="card stat-card">
-          <span className="stat-value">{loading ? '—' : totalMateriales}</span>
+          {loading ? <div className="skel skel-text" style={{ width: 40, height: 28 }} /> : <span className="stat-value">{cMateriales}</span>}
           <span className="stat-label">Materiales</span>
         </div>
         <div className="card stat-card">
-          <span className="stat-value">{loading ? '—' : totalAlmacenes}</span>
+          {loading ? <div className="skel skel-text" style={{ width: 40, height: 28 }} /> : <span className="stat-value">{cAlmacenes}</span>}
           <span className="stat-label">Almacenes</span>
         </div>
         <div className="card stat-card">
-          <span className="stat-value">{loading ? '—' : categorias}</span>
+          {loading ? <div className="skel skel-text" style={{ width: 40, height: 28 }} /> : <span className="stat-value">{cCategorias}</span>}
           <span className="stat-label">Categorías</span>
         </div>
         <div className="card stat-card">
-          <span className="stat-value">{loading ? '—' : nuevosSemana}</span>
+          {loading ? <div className="skel skel-text" style={{ width: 40, height: 28 }} /> : <span className="stat-value">{cNuevos}</span>}
           <span className="stat-label">Nuevos (7 días)</span>
         </div>
       </div>
@@ -149,7 +155,13 @@ export function Dashboard() {
       <div className="dashboard-split">
         <div className="dashboard-panel">
           <h3>Materiales por categoría</h3>
-          {!loading && topCategorias.length === 0 ? (
+          {loading ? (
+            <div className="bar-list">
+              {[70, 45, 30].map((w, i) => (
+                <div className="skel skel-text" key={i} style={{ width: `${w}%`, height: 30, marginBottom: 8 }} />
+              ))}
+            </div>
+          ) : topCategorias.length === 0 ? (
             <p className="hint">Asigna categorías a tus materiales para ver la distribución aquí.</p>
           ) : (
             <div className="bar-list">
@@ -175,7 +187,9 @@ export function Dashboard() {
 
         <div className="dashboard-panel">
           <h3>Pocas existencias</h3>
-          {!loading && stockBajo.length === 0 ? (
+          {loading ? (
+            <div className="skel skel-row" />
+          ) : stockBajo.length === 0 ? (
             <p className="hint">Todo tu inventario tiene existencias saludables.</p>
           ) : (
             <div className="recent-list">
@@ -196,7 +210,11 @@ export function Dashboard() {
       <div className="dashboard-recent">
         <h3>Últimos registrados</h3>
         {loading ? (
-          <p className="hint">Cargando…</p>
+          <div className="recent-list">
+            <div className="skel skel-row" />
+            <div className="skel skel-row" />
+            <div className="skel skel-row" />
+          </div>
         ) : recientes.length === 0 ? (
           <p className="hint">Aún no hay materiales — escanea el primero.</p>
         ) : (
