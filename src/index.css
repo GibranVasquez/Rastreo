@@ -135,7 +135,7 @@ code {
   flex-shrink: 0;
   border-radius: 9px;
   display: block;
-  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+  box-shadow: 0 4px 14px rgba(79, 127, 255, 0.35);
 }
 
 .brand-lockup {
@@ -169,9 +169,18 @@ code {
   display: flex;
   align-items: center;
   gap: 20px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.navbar-links::-webkit-scrollbar {
+  display: none;
 }
 
 .navbar-links a {
+  flex-shrink: 0;
   color: var(--text);
   text-decoration: none;
   font-weight: 500;
@@ -182,6 +191,24 @@ code {
 .navbar-links a.active {
   color: var(--ink);
   font-weight: 700;
+}
+
+.navbar-links .link-btn {
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    gap: 8px;
+  }
+
+  .navbar-user {
+    display: none;
+  }
+
+  .navbar-links {
+    gap: 16px;
+  }
 }
 
 /* Dark navbar variant — used on /scanner to match its immersive camera UI */
