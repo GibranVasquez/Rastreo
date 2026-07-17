@@ -212,6 +212,7 @@ code {
 }
 
 .navbar-avatar {
+  position: relative;
   width: 32px;
   height: 32px;
   padding: 0;
@@ -223,6 +224,26 @@ code {
   background: linear-gradient(155deg, var(--acc-deep), var(--acc));
   color: #fff;
   box-shadow: none;
+}
+
+.navbar-avatar-dot {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--danger);
+  border: 2px solid var(--bg-canvas);
+}
+
+.navbar-menu-alert {
+  display: block;
+  font-size: 12.5px;
+  color: var(--danger);
+  text-decoration: none;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
 }
 
 .navbar-menu {
@@ -1295,7 +1316,13 @@ label {
   margin-bottom: 28px;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 560px) {
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
   .quick-actions {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1549,7 +1576,7 @@ label {
   flex-shrink: 0;
 }
 
-.bar-row-label span:nth-child(2) {
+.bar-row-name {
   flex: 1;
   color: var(--ink);
   font-weight: 500;
@@ -1589,4 +1616,38 @@ label {
   border-radius: 50%;
   background: var(--danger);
   box-shadow: 0 0 0 4px var(--danger-bg);
+}
+
+/* Estadísticas: timeline de 14 días */
+.timeline-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 140px;
+  padding-top: 8px;
+}
+
+.timeline-bar-wrap {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+}
+
+.timeline-bar {
+  width: 100%;
+  max-width: 22px;
+  border-radius: 4px 4px 2px 2px;
+  background: linear-gradient(180deg, var(--acc), var(--acc-deep));
+  transition: height 0.4s ease;
+}
+
+.timeline-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-soft);
 }

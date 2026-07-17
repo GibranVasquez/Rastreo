@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { categoryColor } from '../utils/categoryColors'
+import { STOCK_BAJO_MAX } from '../lib/constants'
 import type { Material } from '../types'
-
-const STOCK_BAJO_MAX = 2
 
 function saludo() {
   const hora = new Date().getHours()
@@ -131,6 +130,20 @@ export function Dashboard() {
             <small>Gestionar ubicaciones</small>
           </span>
         </Link>
+        <Link to="/categorias" className="quick-action">
+          <span className="quick-action-icon">◆</span>
+          <span>
+            <b>Categorías</b>
+            <small>Organizar tipos de material</small>
+          </span>
+        </Link>
+        <Link to="/estadisticas" className="quick-action">
+          <span className="quick-action-icon">▲</span>
+          <span>
+            <b>Estadísticas</b>
+            <small>Tendencias y distribución</small>
+          </span>
+        </Link>
       </div>
 
       <div className="dashboard-split">
@@ -147,7 +160,7 @@ export function Dashboard() {
                   <div className="bar-row" key={c.nombre}>
                     <div className="bar-row-label">
                       <span className="bar-dot" style={{ background: fg }} />
-                      <span>{c.nombre}</span>
+                      <span className="bar-row-name">{c.nombre}</span>
                       <span className="bar-row-count">{c.cantidad}</span>
                     </div>
                     <div className="bar-track">

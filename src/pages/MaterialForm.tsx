@@ -29,6 +29,7 @@ export function MaterialForm() {
   const [buscandoProducto, setBuscandoProducto] = useState(false)
   const [autocompletado, setAutocompletado] = useState(false)
   const [almacenes, setAlmacenes] = useState<string[]>([])
+  const [categoriasDb, setCategoriasDb] = useState<string[]>([])
 
   useEffect(() => {
     supabase
@@ -36,6 +37,12 @@ export function MaterialForm() {
       .select('nombre')
       .order('nombre')
       .then(({ data }) => setAlmacenes((data ?? []).map((a) => a.nombre)))
+
+    supabase
+      .from('categorias')
+      .select('nombre')
+      .order('nombre')
+      .then(({ data }) => setCategoriasDb((data ?? []).map((c) => c.nombre)))
   }, [])
 
   useEffect(() => {
@@ -124,9 +131,10 @@ export function MaterialForm() {
     )
   }
 
-  const catChips = categoria && !SUGGESTED_CATEGORIAS.includes(categoria)
-    ? [...SUGGESTED_CATEGORIAS, categoria]
-    : SUGGESTED_CATEGORIAS
+  const baseCategorias = categoriasDb.length > 0 ? categoriasDb : SUGGESTED_CATEGORIAS
+  const catChips = categoria && !baseCategorias.includes(categoria)
+    ? [...baseCategorias, categoria]
+    : baseCategorias
 
   return (
     <div className="form-page">

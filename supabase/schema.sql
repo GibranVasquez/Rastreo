@@ -87,3 +87,39 @@ create policy "almacenes_update_auth" on almacenes
 drop policy if exists "almacenes_delete_auth" on almacenes;
 create policy "almacenes_delete_auth" on almacenes
   for delete using (auth.role() = 'authenticated');
+
+-- Categorías: catálogo compartido de categorías (independiente de "categoria"
+-- en materiales, que sigue siendo texto libre — aquí solo se administra la lista)
+create table if not exists categorias (
+  id uuid primary key default gen_random_uuid(),
+  nombre text not null,
+  notas text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create unique index if not exists categorias_nombre_key on categorias (nombre);
+
+drop trigger if exists categorias_set_updated_at on categorias;
+create trigger categorias_set_updated_at
+  before update on categorias
+  for each row
+  execute function set_updated_at();
+
+alter table categorias enable row level security;
+
+drop policy if exists "categorias_select_auth" on categorias;
+create policy "categorias_select_auth" on categorias
+  for select using (auth.role() = 'authenticated');
+
+drop policy if exists "categorias_insert_auth" on categorias;
+create policy "categorias_insert_auth" on categorias
+  for insert with check (auth.role() = 'authenticated');
+
+drop policy if exists "categorias_update_auth" on categorias;
+create policy "categorias_update_auth" on categorias
+  for update using (auth.role() = 'authenticated');
+
+drop policy if exists "categorias_delete_auth" on categorias;
+create policy "categorias_delete_auth" on categorias
+  for delete using (auth.role() = 'authenticated');

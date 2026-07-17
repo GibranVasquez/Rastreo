@@ -23,3 +23,13 @@ export interface Almacen {
 }
 
 export type AlmacenInput = Omit<Almacen, 'id' | 'created_at' | 'updated_at'>
+
+export interface Categoria {
+  id: string
+  nombre: string
+  notas: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type CategoriaInput = Omit<Categoria, 'id' | 'created_at' | 'updated_at'>

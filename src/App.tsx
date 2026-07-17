@@ -9,6 +9,8 @@ import { MaterialForm } from './pages/MaterialForm'
 import { Listado } from './pages/Listado'
 import { Dashboard } from './pages/Dashboard'
 import { Almacenes } from './pages/Almacenes'
+import { Categorias } from './pages/Categorias'
+import { Estadisticas } from './pages/Estadisticas'
 import { isSupabaseConfigured } from './lib/supabase'
 
 function SetupNeeded() {
@@ -73,6 +75,22 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Almacenes />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/categorias"
+                element={
+                  <ProtectedRoute>
+                    <Categorias />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/estadisticas"
+                element={
+                  <ProtectedRoute>
+                    <Estadisticas />
                   </ProtectedRoute>
                 }
               />

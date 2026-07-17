@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { STOCK_BAJO_MAX } from '../lib/constants'
 
 export function NavBar() {
   const { session } = useAuth()
   const { pathname } = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [hayBajoStock, setHayBajoStock] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -16,6 +18,15 @@ export function NavBar() {
     document.addEventListener('mousedown', onClickOutside)
     return () => document.removeEventListener('mousedown', onClickOutside)
   }, [])
+
+  useEffect(() => {
+    if (!session) return
+    supabase
+      .from('materiales')
+      .select('*', { count: 'exact', head: true })
+      .lte('cantidad', STOCK_BAJO_MAX)
+      .then(({ count }) => setHayBajoStock((count ?? 0) > 0))
+  }, [session])
 
   if (!session) return null
 
@@ -43,6 +54,12 @@ export function NavBar() {
           <NavLink to="/almacenes" className={({ isActive }) => (isActive ? 'active' : '')}>
             Almacenes
           </NavLink>
+          <NavLink to="/categorias" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Categorías
+          </NavLink>
+          <NavLink to="/estadisticas" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Estadísticas
+          </NavLink>
         </div>
       </div>
 
@@ -54,10 +71,16 @@ export function NavBar() {
           aria-label="Cuenta"
         >
           {inicial}
+          {hayBajoStock && <span className="navbar-avatar-dot" title="Hay materiales con pocas existencias" />}
         </button>
         {menuOpen && (
           <div className="navbar-menu">
             <div className="navbar-menu-email">{email}</div>
+            {hayBajoStock && (
+              <NavLink to="/" className="navbar-menu-alert" onClick={() => setMenuOpen(false)}>
+                ● Hay materiales con pocas existencias
+              </NavLink>
+            )}
             <button
               type="button"
               className="link-btn danger"
